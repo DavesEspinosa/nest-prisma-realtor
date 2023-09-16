@@ -7,11 +7,13 @@ import {
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { GenerateProductKeyDto, SigninDto, SignupDto } from '../dtos/auth.dto';
 import { UserType } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import { User, UserInfo } from '../decorators/user.decorator';
+import { User, UserInfo } from '../../../../decorators/user.decorator';
+import { GenerateProductKeyDto } from '../../domains/generateProductKey.entity';
+import { SigninDto } from '../../domains/signin.entity';
+import { SignupDto } from '../../domains/signup.entity';
+import { AuthService } from '../secondary/auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -49,7 +51,6 @@ export class AuthController {
 
   @Get('/me')
   me(@User() user: UserInfo) {
-    console.log("🚀 ~ file: auth.controller.ts:52 ~ AuthController ~ me ~ user:", user)
     return user;
   }
 }

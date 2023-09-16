@@ -4,19 +4,8 @@ import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { UserType } from '@prisma/client';
 
-interface SignupParams {
-  email: string;
-  password: string;
-  name: string;
-  phone: string;
-}
-
-interface SigninParams {
-  email: string;
-  password: string;
-}
 @Injectable()
-export class AuthService {
+export class AuthRepository {
   constructor(private readonly prismaService: PrismaService) {}
   async signup(
     { email, password, name, phone }: SignupParams,

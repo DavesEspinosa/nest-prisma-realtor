@@ -1,37 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { HomeResponseDto } from './dtos/home.dto';
-import { PropertyTpe } from '@prisma/client';
-import { UserInfo } from 'src/user/decorators/user.decorator';
+import { UserInfo } from 'src/decorators/user.decorator';
 import { PrismaService } from 'src/prisma/prisma.service';
-
-interface GetHomesParam {
-  city?: string;
-  price?: {
-    gte?: number;
-    lte?: number;
-  };
-  propertyTpe?: PropertyTpe;
-}
-
-interface CreateHomeParam {
-  address: string;
-  city: string;
-  numberOfBedrooms: number;
-  numberOfBathrooms: number;
-  price: number;
-  landSize: number;
-  propertyType: PropertyTpe;
-  images: { url: string }[];
-}
-interface UpdateHomeParam {
-  address?: string;
-  city?: string;
-  numberOfBedrooms?: number;
-  numberOfBathrooms?: number;
-  price?: number;
-  landSize?: number;
-  propertyType?: PropertyTpe;
-}
+import { HomeResponseDto } from '../domains/homeResponse.entity';
+import { GetHomesParam, CreateHomeParam, UpdateHomeParam } from '../types';
 
 const homeSelect = {
   id: true,
@@ -43,9 +14,9 @@ const homeSelect = {
   number_of_bathrooms: true,
 };
 @Injectable()
-export class HomeService {
+export class HomeRepository {
   constructor(private readonly prismaService: PrismaService) {}
-  async getHomes(filters: GetHomesParam): Promise<Array<HomeResponseDto>> {
+  async getAllHomes(filters: GetHomesParam): Promise<Array<HomeResponseDto>> {
     const homes = await this.prismaService.home.findMany({
       select: {
         ...homeSelect,
@@ -71,7 +42,7 @@ export class HomeService {
     });
   }
 
-  async getHome(id: number): Promise<HomeResponseDto> {
+  async getHomeById(id: number): Promise<HomeResponseDto> {
     const home = await this.prismaService.home.findUnique({
       where: { id },
       select: {
@@ -96,7 +67,7 @@ export class HomeService {
     return new HomeResponseDto(home);
   }
 
-  async createHome(
+  async saveHome(
     {
       address,
       numberOfBathrooms,
@@ -129,7 +100,7 @@ export class HomeService {
 
     return new HomeResponseDto(home);
   }
-  async updateHome(data: UpdateHomeParam, id: number) {
+  async putHome(data: UpdateHomeParam, id: number) {
     const home = await this.prismaService.home.findUnique({
       where: {
         id,
@@ -182,7 +153,7 @@ export class HomeService {
     });
   }
 
-  async inquire(buyer: UserInfo, homeId: number, message: string) {
+  async saveInquire(buyer: UserInfo, homeId: number, message: string) {
     const realtor = await this.getRealtorByHomeId(homeId);
     return await this.prismaService.message.create({
       data: {

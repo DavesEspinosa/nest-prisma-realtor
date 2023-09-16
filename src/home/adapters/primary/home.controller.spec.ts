@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HomeController } from './home.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { HomeService } from './home.service';
 import { PropertyTpe } from '@prisma/client';
 import { UnauthorizedException } from '@nestjs/common';
-import { UpdateHomeDto } from './dtos/home.dto';
+import { UpdateHomeDto } from 'src/home/domains/updateHome.entity';
+import { HomeService } from '../secondary/home.service';
 
 const mockUser = {
   name: 'Laith',
