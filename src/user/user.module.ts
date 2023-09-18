@@ -8,6 +8,6 @@ import { AuthService } from './auth/adapters/secondary/auth.service';
   imports: [PrismaModule],
   controllers: [AuthController],
   providers: [AuthService, AuthRepository],
-  exports: [AuthRepository],
+  exports: [AuthRepository, AuthService],
 })
 export class UserModule {}

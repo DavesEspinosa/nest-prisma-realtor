@@ -1,15 +1,16 @@
 import { PropertyTpe } from '@prisma/client';
 import { Exclude, Expose } from 'class-transformer';
-import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsNotEmpty, IsString } from 'class-validator';
 
-export class HomeResponseDto {
-  @IsString()
+export class HomeResponse {
+  @IsNumber()
   @IsNotEmpty()
   id: number;
   @IsString()
   @IsNotEmpty()
   address: string;
-  @IsInt()
+
+  @IsNumber()
   @IsNotEmpty()
   @Exclude()
   number_of_bedrooms: number;
@@ -17,7 +18,7 @@ export class HomeResponseDto {
   numberOfBedrooms() {
     return this.number_of_bedrooms;
   }
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
   @Exclude()
   number_of_bathrooms: number;
@@ -34,12 +35,12 @@ export class HomeResponseDto {
   listedDate() {
     return this.listed_date;
   }
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
   price: number;
 
   image: string;
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
   @Exclude()
   land_size: number;
@@ -57,7 +58,7 @@ export class HomeResponseDto {
   @Exclude()
   updated_at: Date;
 
-  constructor(partial: Partial<HomeResponseDto>) {
+  constructor(partial: Partial<HomeResponse>) {
     Object.assign(this, partial);
   }
 }

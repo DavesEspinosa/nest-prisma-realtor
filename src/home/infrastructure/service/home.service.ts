@@ -1,8 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserInfo } from 'src/decorators/user.decorator';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { HomeResponseDto } from '../domains/homeResponse.entity';
-import { GetHomesParam, CreateHomeParam, UpdateHomeParam } from '../types';
+import { IHomeService } from 'src/home/domain/repository/home.repository';
+import { HomeResponse } from 'src/home/domain/models/homeResponse.entity';
+import {
+  CreateHomeParam,
+  GetHomesParam,
+  UpdateHomeParam,
+} from 'src/home/types';
 
 const homeSelect = {
   id: true,
@@ -14,9 +19,9 @@ const homeSelect = {
   number_of_bathrooms: true,
 };
 @Injectable()
-export class HomeRepository {
+export class HomeService implements IHomeService {
   constructor(private readonly prismaService: PrismaService) {}
-  async getAllHomes(filters: GetHomesParam): Promise<Array<HomeResponseDto>> {
+  async getHomes(filters: GetHomesParam): Promise<Array<HomeResponse>> {
     const homes = await this.prismaService.home.findMany({
       select: {
         ...homeSelect,
@@ -35,14 +40,14 @@ export class HomeRepository {
     return homes.map((home) => {
       if (!home.images) {
         const fetcHome = { ...home, image: home.images[0].url };
-        return new HomeResponseDto(fetcHome);
+        return new HomeResponse(fetcHome);
       } else {
-        return new HomeResponseDto(home);
+        return new HomeResponse(home);
       }
     });
   }
 
-  async getHomeById(id: number): Promise<HomeResponseDto> {
+  async getHome(id: number): Promise<HomeResponse> {
     const home = await this.prismaService.home.findUnique({
       where: { id },
       select: {
@@ -64,10 +69,10 @@ export class HomeRepository {
     if (!home) {
       throw new NotFoundException();
     }
-    return new HomeResponseDto(home);
+    return new HomeResponse(home);
   }
 
-  async saveHome(
+  async createHome(
     {
       address,
       numberOfBathrooms,
@@ -98,9 +103,9 @@ export class HomeRepository {
     });
     await this.prismaService.image.createMany({ data: homeImages });
 
-    return new HomeResponseDto(home);
+    return new HomeResponse(home);
   }
-  async putHome(data: UpdateHomeParam, id: number) {
+  async updateHome(data: UpdateHomeParam, id: number) {
     const home = await this.prismaService.home.findUnique({
       where: {
         id,
@@ -137,7 +142,7 @@ export class HomeRepository {
       },
     });
 
-    return new HomeResponseDto(updatedHome);
+    return new HomeResponse(updatedHome);
   }
   async deleteHome(id: number) {
     await this.prismaService.image.deleteMany({
@@ -153,7 +158,7 @@ export class HomeRepository {
     });
   }
 
-  async saveInquire(buyer: UserInfo, homeId: number, message: string) {
+  async inquire(buyer: UserInfo, homeId: number, message: string) {
     const realtor = await this.getRealtorByHomeId(homeId);
     return await this.prismaService.message.create({
       data: {

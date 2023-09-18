@@ -12,7 +12,6 @@ import { AuthService } from './user/auth/adapters/secondary/auth.service';
   imports: [UserModule, HomeModule],
   controllers: [AuthController],
   providers: [
-    AuthService,
     PrismaService,
     {
       provide: APP_INTERCEPTOR,
